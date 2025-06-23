@@ -1,94 +1,87 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
 # db/seeds.rb
-require "open-uri"
+puts "Destroying old records..."
+Booking.destroy_all
+Vehicle.destroy_all
+Post.destroy_all
+User.destroy_all
 
-# 1. Wipe existing data
-Booking.delete_all
-Vehicle.delete_all
-User.delete_all
-
-# 2. Create users
+puts "Seeding Users..."
 owner = User.create!(
-  email:    "owner@scooterbnb.com",
+  email: "owner@scooterbnb.com",
   password: "password",
-  name:     "Owner Alice"
+  name: "Scooter Owner",
+  bio: "I love scooters!"
 )
 
 renter = User.create!(
-  email:    "renter@scooterbnb.com",
+  email: "renter@scooterbnb.com",
   password: "password",
-  name:     "Renter Bob"
+  name: "Scooter Renter",
+  bio: "I enjoy riding scooters!"
 )
 
-# 3. Sample image URLs (swap with real URLs later)
-placeholder_images = [
-  "https://movimentmobilidadeurbana.com.br/wp-content/uploads/2022/12/KY_0195-1-scaled.jpg",
-  "https://cdn.awsli.com.br/2500x2500/2299/2299072/produto/144097131/5b0a111f1f.jpg"
-]
+puts "Attaching user avatars via Active Storage (uploads will go to Cloudinary)..."
+owner_avatar_path = Rails.root.join("db", "seeds_images", "owner_avatar.jpeg")
+renter_avatar_path = Rails.root.join("db", "seeds_images", "test_avatar.jpg")
 
-# 4. Seed owner’s vehicles
-vehicles_data = [
-  {
-    title:          "City Cruiser Scooter",
-    description:    "Easy handling for daily commutes.",
-    vehicle_type:   "scooter",
-    engine_size:    "150cc",
-    price_per_day:  2000,
-    location:       "San Francisco, CA",
-    available_from: Date.today,
-    available_to:   Date.today + 10
-  },
-  {
-    title:          "Vintage Roadster",
-    description:    "Classic motorcycle vibes.",
-    vehicle_type:   "motorcycle",
-    engine_size:    "500cc",
-    price_per_day:  4500,
-    location:       "San Francisco, CA",
-    available_from: Date.today + 2,
-    available_to:   Date.today + 14
-  }
-]
+owner.avatar.attach(
+  io: File.open(owner_avatar_path),
+  filename: "owner_avatar.jpeg",
+  content_type: "image/jpeg"
+)
 
-vehicles = vehicles_data.map.with_index do |attrs, idx|
-  v = owner.vehicles.create!(attrs)
-  # attach two placeholder images
-  placeholder_images.each do |url|
-    v.photos.attach(
-      io:       URI.open(url),
-      filename: "veh#{idx}-#{File.basename(url)}"
-    )
-  end
-  v
-end
+renter.avatar.attach(
+  io: File.open(renter_avatar_path),
+  filename: "test_avatar.jpg",
+  content_type: "image/jpeg"
+)
 
-# 5. Seed bookings by the renter
-# Booking 1: valid booking on first vehicle
+puts "Seeding Vehicles..."
+vehicle = Vehicle.create!(
+  title: "Electric Scooter",
+  description: "A fun and eco-friendly scooter!",
+  vehicle_type: "Electric",
+  engine_size: "0cc",
+  price_per_day: 25,
+  location: "New York City",
+  available_from: Date.today,
+  available_to: Date.today + 30,
+  user: owner
+)
+
+vehicle1 = Vehicle.create!(
+  title: "Electric Scooter",
+  description: "A fun and eco-friendly scooter!",
+  vehicle_type: "Electric",
+  engine_size: "0cc",
+  price_per_day: 25,
+  location: "New York City",
+  available_from: Date.today,
+  available_to: Date.today + 30,
+  user: owner
+)
+
+puts "Attaching vehicle photos via Active Storage..."
+veh_photo1_path = Rails.root.join("db", "seeds_images", "veh0_image1.jpg")
+veh_photo2_path = Rails.root.join("db", "seeds_images", "veh0_image2.jpg")
+
+vehicle.photos.attach([
+  { io: File.open(veh_photo1_path), filename: "veh0_image1.jpg", content_type: "image/jpeg" },
+  { io: File.open(veh_photo2_path), filename: "veh0_image2.jpg", content_type: "image/jpeg" }
+])
+
+vehicle1.photos.attach([
+  { io: File.open(veh_photo1_path), filename: "veh0_image1.jpg", content_type: "image/jpeg" },
+  { io: File.open(veh_photo2_path), filename: "veh0_image2.jpg", content_type: "image/jpeg" }
+])
+
+puts "Seeding Bookings..."
 Booking.create!(
-  start_date:  Date.today + 1,
-  end_date:    Date.today + 3,
-  user:        renter,
-  vehicle:     vehicles.first
+  start_date: Date.today + 1,
+  end_date: Date.today + 5,
+  status: "confirmed",
+  user: renter,
+  vehicle: vehicle
 )
 
-# Booking 2: overlapping booking on second vehicle to test validation
-invalid_booking = Booking.new(
-  start_date:  Date.today + 5,
-  end_date:    Date.today + 4,  # end before start
-  user:        renter,
-  vehicle:     vehicles.second
-)
-puts "Invalid booking errors: #{invalid_booking.tap(&:valid?).errors.full_messages}"
-
-puts "Seeds complete:"
-puts "- Users: #{User.count}"
-puts "- Vehicles: #{Vehicle.count}"
-puts "- Bookings: #{Booking.count} (#{Booking.where(status: 'pending').size} pending)"
+puts "Seeding complete."

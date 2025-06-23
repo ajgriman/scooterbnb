@@ -1,0 +1,32 @@
+<div class="container mt-4">
+  <div class="row">
+    <% @vehicles.each do |vehicle| %>
+      <div class="col-md-4 mb-4">
+        <div class="card h-100">
+          <% if vehicle.photos.attached? %>
+            <%= cl_image_tag(vehicle.photos.first.blob.key,
+                  height: 300,
+                  width: 400,
+                  crop: "fill",
+                  class: "card-img-top",
+                  alt: vehicle.title) %>
+          <% else %>
+            <!-- Fallback: Display a local placeholder image -->
+            <%= image_tag asset_path("placeholder.jpg"),
+                  class: "card-img-top",
+                  alt: vehicle.title %>
+          <% end %>
+          <div class="card-body">
+            <h5 class="card-title"><%= vehicle.title %></h5>
+            <p class="card-text"><strong>Location:</strong> <%= vehicle.location %></p>
+            <p class="card-text">
+              <strong>Price per day:</strong>
+              $<%= sprintf('%.2f', vehicle.price_per_day / 100.0) %>
+            </p>
+            <%= link_to "View Details", vehicle_path(vehicle), class: "btn btn-primary" %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
