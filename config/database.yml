@@ -80,19 +80,15 @@ test:
 #
 production:
   primary: &primary_production
-    <<: *default
-    database: scooterbnb_production
-    username: scooterbnb
-    password: <%= ENV["SCOOTERBNB_DATABASE_PASSWORD"] %>
+    <<: *default # Inherit adapter, pool size, etc. from the top
+    url: <%= ENV["DATABASE_URL"] %>
+
   cache:
-    <<: *primary_production
-    database: scooterbnb_production_cache
+    <<: *primary_production # Inherits the url from the block above
     migrations_paths: db/cache_migrate
   queue:
-    <<: *primary_production
-    database: scooterbnb_production_queue
+    <<: *primary_production # Inherits the url from the block above
     migrations_paths: db/queue_migrate
   cable:
-    <<: *primary_production
-    database: scooterbnb_production_cable
+    <<: *primary_production # Inherits the url from the block above
     migrations_paths: db/cable_migrate
