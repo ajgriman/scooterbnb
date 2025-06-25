@@ -1,9 +1,11 @@
-#!/usr/bin/env bash
-
 set -o errexit
 
-bundle install
-bin/rails assets:precompile
-bin/rails assets:clean
+bundle install --without development test
+bundle exec rake assets:precompile
+bundle exec rake assets:clean
 
-bin/rails db:migrate
+# For the very first deploy, load your schema so 'vehicles' exists
+bundle exec rake db:schema:load
+
+# For subsequent deploys, you can switch to just running
+bundle exec rake db:migrate
