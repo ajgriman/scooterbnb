@@ -2,7 +2,6 @@
 puts "Destroying old records..."
 Booking.destroy_all
 Vehicle.destroy_all
-Post.destroy_all
 User.destroy_all
 
 puts "Seeding Users..."

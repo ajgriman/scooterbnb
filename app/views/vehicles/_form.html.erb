@@ -1,0 +1,30 @@
+<%= simple_form_for @vehicle, html: { multipart: true } do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-group">
+    <%= f.input :title %>
+    <%= f.input :description %>
+    <%= f.input :vehicle_type %>
+    <%= f.input :engine_size %>
+    <%= f.input :price_per_day, hint: "In cents — 100 = $1" %>
+    <%= f.input :location %>
+    <%= f.input :available_from, as: :date %>
+    <%= f.input :available_to, as: :date %>
+    
+    <!-- Isolated controller container -->
+    <div data-controller="photo-preview">
+      <%= f.input :photos, as: :file, input_html: { 
+        multiple: true, 
+        accept: "image/jpeg,image/png",
+        data: { "photo-preview-target": "input" }
+      } %>
+      
+      <div class="mt-3 row" 
+           data-photo-preview-target="preview">
+        <!-- Preview will appear here -->
+      </div>
+    </div>
+  </div>
+
+  <%= f.button :submit, class: "btn btn-primary mt-3" %>
+<% end %>

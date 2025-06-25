@@ -1,0 +1,62 @@
+<div class="container mt-4">
+  <div class="row">
+    <!-- Main Vehicle Details Section -->
+    <div class="col-md-8">
+      <h1><%= @vehicle.title %></h1>
+      <p><strong>Description:</strong> <%= @vehicle.description %></p>
+      <p>
+        <strong>Type:</strong> <%= @vehicle.vehicle_type %><br>
+        <strong>Engine Size:</strong> <%= @vehicle.engine_size %><br>
+        <strong>Price per day:</strong> $<%= sprintf('%.2f', @vehicle.price_per_day / 100.0) %><br>
+        <strong>Location:</strong> <%= @vehicle.location %><br>
+        <strong>Available from:</strong> <%= @vehicle.available_from.strftime("%B %d, %Y") %><br>
+        <strong>Available to:</strong> <%= @vehicle.available_to.strftime("%B %d, %Y") %>
+      </p>
+
+       <% if @vehicle.photos.attached? %>
+        <div class="vehicle-images">
+          <% @vehicle.photos.each do |photo| %>
+            <%= cl_image_tag(photo.blob.key,
+                  height: 400,
+                  width: 600,
+                  crop: "fill",
+                  class: "img-fluid mb-3",
+                  alt: @vehicle.title) %>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="booking-summary mt-4">
+        <h3>Bookings Summary</h3>
+        <% if @bookings.any? %>
+          <ul>
+            <% @bookings.each do |booking| %>
+              <li>
+                <strong>Status:</strong> <%= booking.status %>,
+                <strong>From:</strong> <%= booking.start_date.strftime("%b %d, %Y") %>,
+                <strong>To:</strong> <%= booking.end_date.strftime("%b %d, %Y") %>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p>No bookings yet.</p>
+        <% end %>
+      </div>
+    </div>
+
+    
+    <div class="col-md-4">
+        <h2>Request a Booking</h2>
+        <%= simple_form_for Booking.new, url: vehicle_bookings_path(@vehicle), method: :post, local: true do |f| %>
+            <div class="form-group">
+            <%= f.input :start_date, as: :date %>
+            </div>
+            <div class="form-group">
+            <%= f.input :end_date, as: :date %>
+            </div>
+            <%= f.hidden_field :vehicle_id, value: @vehicle.id %>
+            <%= f.button :submit, "Request Booking", class: "btn btn-primary mt-3" %>
+        <% end %>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
-  resources :vehicles, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+  resources :vehicles do
+    resources :bookings, only: [ :create ]
+  end
   # get "vehicles/index"
   devise_for :users
   # get "pages/home"

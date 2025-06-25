@@ -1,0 +1,16 @@
+<div class="container mt-4">
+  <h1>Add a New Vehicle</h1>
+
+  <% if @vehicle.errors.any? %>
+    <div class="alert alert-danger">
+      <h4>Fix the following errors:</h4>
+      <ul>
+        <% @vehicle.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= render "form" %>
+</div>
