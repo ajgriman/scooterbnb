@@ -1,30 +1,36 @@
+# render.yaml
+# The final, correct blueprint for the ScooterBNB application.
+
+version: "1"
+
 services:
   - type: web
-    name: scooterbnb # You can change this if you like
+    name: scooterbnb
     runtime: ruby
-    plan: free # Specifies the free instance type
+    plan: free
+    region: virginia # From your export
     
-    # This build command uses the script we created.
-    # It is the most reliable way to ensure all steps run.
+    # THE FIX: Use our reliable build script.
     buildCommand: './bin/render-build.sh'
     
-    # The command to start your Rails server.
+    # A more robust start command for a production Rails app.
     startCommand: 'bundle exec puma -C config/puma.rb'
     
-    # Environment variables for your application.
     envVars:
       - key: DATABASE_URL
         fromDatabase:
           name: scooterbnb-db # Matches the database name below
           property: connectionString
       - key: RAILS_MASTER_KEY
-        sync: false # Set this securely in the dashboard, not in git.
-      - key: CLOUDINARY_URL  # <-- ADDED THIS VARIABLE
-        sync: false # Set this securely in the dashboard, not in git.
+        sync: false # You will set this in the dashboard on deploy.
+      - key: CLOUDINARY_URL
+        sync: false # You will set this in the dashboard on deploy.
       - key: WEB_CONCURRENCY
-        value: 2 # Recommended default for free instances.
+        value: 2 # Recommended for free instances.
 
 databases:
   - name: scooterbnb-db # This name MUST match fromDatabase above
-    databaseName: scooterbnb_prod # The actual name of the database
-    plan: free # Specifies the free instance type
+    databaseName: scooterbnb_db # From your export
+    user: scooterbnb_db_user # From your export
+    plan: free
+    region: virginia # From your export
