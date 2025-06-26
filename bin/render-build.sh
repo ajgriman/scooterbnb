@@ -14,5 +14,5 @@ bundle exec rails assets:clean
 echo "--- Preparing Primary Database ---"
 DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rails db:prepare
 
-echo "--- Preparing Queue Database ---"
-DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rails db:prepare:queue
+# echo "--- Preparing Queue Database ---"
+# DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rails db:prepare:queue
