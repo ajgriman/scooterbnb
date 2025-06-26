@@ -3,9 +3,7 @@ Rails.application.routes.draw do
     resources :bookings, only: [ :create ]
   end
   # get "vehicles/index"
-  devise_for :users, controllers: {
-  registrations: 'users/registrations'
-}
+  devise_for :users
   # get "pages/home"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

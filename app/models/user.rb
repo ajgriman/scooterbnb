@@ -9,5 +9,5 @@ class User < ApplicationRecord
 
   has_one_attached :avatar, service: :cloudinary
 
-  validates :name, presence: true
+  # validates :name, presence: true
 end
