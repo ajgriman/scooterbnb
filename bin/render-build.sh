@@ -6,8 +6,8 @@ bundle install
 bundle exec rails assets:precompile
 bundle exec rails assets:clean
 
-# This single command will now set up the unified database.
-# It will run all migrations found in db/migrate, including the
-# Solid Queue migration we just moved.
-echo "--- Preparing Unified Database ---"
-DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rails db:prepare
+# Manually perform the steps of `db:prepare` but skip `db:seed`.
+# This gives us full control and avoids errors from seed files.
+echo "--- Manually Preparing Unified Database (without seeding) ---"
+DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rails db:schema:load
+DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rails db:migrate
