@@ -1,12 +1,12 @@
+#!/usr/bin/env bash
+# exit on error
 set -o errexit
 
-bundle install --without development test
-bundle exec rake assets:precompile
-bundle exec rake assets:clean
+bundle install
+bundle exec rails assets:precompile
+bundle exec rails assets:clean
 
-# For the very first deploy, load your schema so 'vehicles' exists
-bundle exec rake db:schema:load
-
-# For subsequent deploys, you can switch to just running
-bundle exec rake db:migrate
-bundle exec rails db:migrate:queue
+# This single command handles both initial setup and all future migrations.
+# The environment variable is only needed for the very first deploy.
+DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rails db:migrate
+DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rails db:migrate:queue
