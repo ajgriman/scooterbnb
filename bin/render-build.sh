@@ -9,3 +9,4 @@ bundle exec rake db:schema:load
 
 # For subsequent deploys, you can switch to just running
 bundle exec rake db:migrate
+bundle exec rails db:migrate:queue
