@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: scooterbnb # You can change this if you like
+    runtime: ruby
+    plan: free # Specifies the free instance type
+    
+    # This build command uses the script we created.
+    # It is the most reliable way to ensure all steps run.
+    buildCommand: './bin/render-build.sh'
+    
+    # The command to start your Rails server.
+    startCommand: 'bundle exec puma -C config/puma.rb'
+    
+    # Environment variables for your application.
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: scooterbnb-db # Matches the database name below
+          property: connectionString
+      - key: RAILS_MASTER_KEY
+        sync: false # Set this securely in the dashboard, not in git.
+      - key: CLOUDINARY_URL  # <-- ADDED THIS VARIABLE
+        sync: false # Set this securely in the dashboard, not in git.
+      - key: WEB_CONCURRENCY
+        value: 2 # Recommended default for free instances.
+
+databases:
+  - name: scooterbnb-db # This name MUST match fromDatabase above
+    databaseName: scooterbnb_prod # The actual name of the database
+    plan: free # Specifies the free instance type
