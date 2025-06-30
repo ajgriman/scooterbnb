@@ -4,14 +4,15 @@
 # to make the web console appear.
 development:
   adapter: async
+  writing: primary
 
 test:
   adapter: test
 
 production:
   adapter: solid_cable
-  connects_to:
-    database:
-      writing: cable
+  # connects_to:
+  #   database: primary
+  writing: primary
   polling_interval: 0.1.seconds
   message_retention: 1.day
